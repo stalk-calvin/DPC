@@ -1,0 +1,52 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product Catalog</title>
+
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+  <header>
+    <h1>Product Catalog</h1>
+    <a href="{% url 'admin:index' %}">Admin</a>
+  </header>
+
+  <main>
+    <aside>
+      <form method="get">
+        {{ form.as_div }}
+        <button type="submit">Apply</button>
+        <a href="{% url 'product-list' %}">Reset</a>
+      </form>
+    </aside>
+
+    <section>
+      <p class="count">{{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }} found</p>
+
+      <div class="products">
+        {% for product in products %}
+          <article>
+            <h2>{{ product.name }}</h2>
+            <p class="meta">{{ product.category }} &middot; ${{ product.price }}</p>
+            <p>{{ product.description }}</p>
+            {% for tag in product.tags.all %}<span class="chip">{{ tag }}</span>{% endfor %}
+          </article>
+        {% empty %}
+          <article>No products match your criteria.</article>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+        <nav>
+          {% if page_obj.has_previous %}<a href="{% querystring page=page_obj.previous_page_number %}">&laquo; Previous</a>{% endif %}
+          <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+          {% if page_obj.has_next %}<a href="{% querystring page=page_obj.next_page_number %}">Next &raquo;</a>{% endif %}
+        </nav>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,41 @@
+# Credentials below are for local use only.
+x-postgres: &postgres
+  POSTGRES_DB: catalog
+  POSTGRES_USER: catalog
+  POSTGRES_PASSWORD: catalog
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment: *postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U catalog -d catalog
+      interval: 2s
+      retries: 15
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      <<: *postgres
+      POSTGRES_HOST: db
+      DJANGO_SECRET_KEY: local-compose-only
+
+      DJANGO_ACCESS_LOG: "0"
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DJANGO_SUPERUSER_PASSWORD: admin
+    command: >
+      sh -c "python manage.py migrate --noinput
+      && python manage.py seed_catalog
+      && (python manage.py createsuperuser --noinput || true)
+      && exec gunicorn config.wsgi"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
