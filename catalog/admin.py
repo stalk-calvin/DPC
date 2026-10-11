@@ -51,11 +51,14 @@ class AdminLoginForm(AdminAuthenticationForm):
 admin.site.login_form = AdminLoginForm
 
 
+# One admin class serves both Category and Tag, since they have the same shape.
 @admin.register(Category, Tag)
 class NamedModelAdmin(admin.ModelAdmin):
     list_display = ("name", "product_count")
+    # Also required by ProductAdmin's category autocomplete.
     search_fields = ("name",)
 
+    # Count products in the same query instead of one query per row.
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(product_count=Count("products"))
 
@@ -68,6 +71,7 @@ class NamedModelAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("name", "category", "price", "tag_list")
     list_filter = ("category", "tags")
+    # With the tags prefetch below, the list page avoids N+1 queries.
     list_select_related = ("category",)
     search_fields = ("name", "description")
     autocomplete_fields = ("category",)

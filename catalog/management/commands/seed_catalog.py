@@ -183,8 +183,11 @@ PRODUCTS = (
 class Command(BaseCommand):
     help = "Load sample categories, tags and products. Safe to run multiple times."
 
+    # All or nothing: if anything fails, nothing is saved.
     @transaction.atomic
     def handle(self, *args, **options):
+
+        # Load each category and tag once, so the product loop doesn't query per product.
         categories_by_name = {
             name: Category.objects.get_or_create(name=name)[0] for name in CATEGORIES
         }
@@ -192,6 +195,7 @@ class Command(BaseCommand):
 
         new_product_count = 0
         for seed_product in PRODUCTS:
+            # get_or_create makes re-runs safe: existing products are found, not duplicated.
             product, was_created = Product.objects.get_or_create(
                 name=seed_product.name,
                 category=categories_by_name[seed_product.category],
@@ -200,6 +204,7 @@ class Command(BaseCommand):
                     "price": Decimal(seed_product.price),
                 },
             )
+            # Only new products get tags, so edits made in the admin are never overwritten.
             if was_created:
                 product.tags.set(
                     tags_by_name[tag_name] for tag_name in seed_product.tags

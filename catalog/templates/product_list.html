@@ -16,6 +16,8 @@
 
   <main>
     <aside>
+
+      {# GET, not POST: searching changes nothing, and the URL can be bookmarked. #}
       <form method="get">
         {{ form.as_div }}
         <button type="submit">Apply</button>
@@ -33,6 +35,7 @@
             <p class="meta"><span>{{ product.category }}</span><span>${{ product.price }}</span></p>
             <p>{{ product.description }}</p>
             <div class="tag-container">
+              {# Tags were prefetched by the view, so this loop runs no queries. #}
               {% for tag in product.tags.all %}
                 <span class="tag">{{ tag }}</span>
               {% endfor %}
@@ -44,6 +47,7 @@
       </div>
 
       {% if is_paginated %}
+        {# querystring keeps the current filters and changes only the page number. #}
         <nav>
           {% if page_obj.has_previous %}<a href="{% querystring page=page_obj.previous_page_number %}">&laquo; Previous</a>{% endif %}
           <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>

@@ -7,6 +7,8 @@ class ProductFilterForm(forms.Form):
     """Field names match ProductQuerySet.filter_by keyword arguments."""
 
     q = forms.CharField(label="Description contains", required=False, max_length=200)
+
+    # Model choice fields turn submitted ids into objects and reject ids that don't exist.
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(), required=False, empty_label="All categories"
     )

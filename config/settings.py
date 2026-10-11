@@ -5,7 +5,9 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# On by default for local runs; the Docker image sets DJANGO_DEBUG=0.
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
+# Refuse to start with the public dev key when DEBUG is off.
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or (
     "dev-only-insecure-key" if DEBUG else ""
 )
@@ -50,6 +52,7 @@ TEMPLATES = [
     },
 ]
 
+# PostgreSQL when Docker Compose provides it, otherwise a local SQLite file.
 if os.environ.get("POSTGRES_DB"):
     DATABASES = {
         "default": {
