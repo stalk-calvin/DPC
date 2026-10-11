@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import Count
 from django.db.models.functions import Lower
 
+
 class NamedModel(models.Model):
     name = models.CharField(max_length=100)
 
@@ -27,20 +28,22 @@ class NamedModel(models.Model):
         self.name = self.name.strip()
         super().save(*args, **kwargs)
 
+
 class Category(NamedModel):
     class Meta(NamedModel.Meta):
         verbose_name_plural = "categories"
 
+
 class Tag(NamedModel):
     pass
 
-class TagMatch(models.TextChoices):
 
+class TagMatch(models.TextChoices):
     ANY = "any", "At least one selected tag"
     ALL = "all", "Every selected tag"
 
-class ProductQuerySet(models.QuerySet):
 
+class ProductQuerySet(models.QuerySet):
     def with_related(self):
         return self.select_related("category").prefetch_related("tags")
 
@@ -68,6 +71,7 @@ class ProductQuerySet(models.QuerySet):
 
     def filter_by(self, *, q="", category=None, tags=(), tag_match=TagMatch.ANY):
         return self.search(q).in_category(category).with_tags(tags, tag_match)
+
 
 class Product(models.Model):
     name = models.CharField(max_length=200)

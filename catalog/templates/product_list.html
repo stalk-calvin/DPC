@@ -30,9 +30,13 @@
         {% for product in products %}
           <article>
             <h2>{{ product.name }}</h2>
-            <p class="meta">{{ product.category }} &middot; ${{ product.price }}</p>
+            <p class="meta"><span>{{ product.category }}</span><span>${{ product.price }}</span></p>
             <p>{{ product.description }}</p>
-            {% for tag in product.tags.all %}<span class="chip">{{ tag }}</span>{% endfor %}
+            <div class="tag-container">
+              {% for tag in product.tags.all %}
+                <span class="tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
           </article>
         {% empty %}
           <article>No products match your criteria.</article>

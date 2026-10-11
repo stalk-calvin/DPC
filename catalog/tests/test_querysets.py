@@ -86,7 +86,6 @@ class ProductQuerySetTests(TestCase):
         self.assertEqual(Product.objects.filter_by().count(), 3)
 
     def test_with_related_avoids_extra_queries_per_product(self):
-
         products_joined_with_category_query, tags_prefetch_query = 1, 1
         with self.assertNumQueries(
             products_joined_with_category_query + tags_prefetch_query

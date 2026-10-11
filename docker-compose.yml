@@ -23,7 +23,6 @@ services:
       <<: *postgres
       POSTGRES_HOST: db
       DJANGO_SECRET_KEY: local-compose-only
-
       DJANGO_ACCESS_LOG: "0"
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_EMAIL: admin@example.com

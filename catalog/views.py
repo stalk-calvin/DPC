@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class ProductListView(ListView):
-
     template_name = "product_list.html"
     context_object_name = "products"
     paginate_by = 5

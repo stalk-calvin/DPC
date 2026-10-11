@@ -185,7 +185,6 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-
         categories_by_name = {
             name: Category.objects.get_or_create(name=name)[0] for name in CATEGORIES
         }
