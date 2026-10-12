@@ -110,3 +110,21 @@ gunicorn.conf.py     gunicorn settings for Docker
 - A category that still has products can't be deleted.
 - The front end is plain Django templates with minimal CSS, so there is no front-end build step.
 - The credentials in `docker-compose.yml` are for local use only.
+
+## AI usage
+
+**Tools used.** GitHub Copilot (chat and agent mode in VS Code) throughout this project.
+
+**How it was used.** Copilot generated the first version of the project from the assignment brief at my request: the models and database constraints, the custom QuerySet (search, category and tag filtering), the filter form, the view, template and CSS, the admin configuration, the `seed_catalog` command and its sample data, the tests.
+
+**Changes I directed afterwards.** I ran the app locally and in Docker, reported problems I found, and asked Copilot to change the code where something was wrong or I wanted it different:
+
+- Removed boilerplate and files I didn't need (`apps.py`, `asgi.py`, `pyproject.toml`, dev tooling, timestamp fields), flattened the `templates/` and `static/` folders, and added `.gitignore`.
+- Fixed the stylesheet not being applie by flattening static files (simplified).
+- Containerized the app (`Dockerfile`, plus `docker-compose.yml` with PostgreSQL) so it installs and runs with one command. The Dockerfile is a multi-stage build (dependencies, tests, static files, final image), so the image only builds if the tests pass, and `pip` is removed from the final image.
+- Fixed the admin hanging on Login/Save (gunicorn now uses threaded workers) and clarified the admin login error.
+- Added logging (rejected filters, failed logins, admin changes, search details), with environment variables for the log level, SQL logging and the request log (`gunicorn.conf.py`).
+- Renamed unclear variables, applied consistent formatting, and added comments explaining the key decisions.
+
+**Learning.** I used Copilot to explain the parts of the Django ecosystem that were new to me: the ORM and migrations, QuerySets and N+1 queries, forms and validation, class-based views and pagination, the admin and permissions, static files and WhiteNoise, gunicorn, `SECRET_KEY` and signing, and logging.
+
